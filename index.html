@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://studentvisiontc.github.io/SVTC-Images/SV%20Circle%20logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Registration - Student Vision</title>
+    <style>
+        :root {
+            --primary-blue: #00008B;
+            --accent-yellow: #ffeb3b;
+            --accent-orange: #ffa500;
+            --success-green: #2e7d32;
+            --error-red: #d32f2f;
+            --bg-gray: #f4f7f9;
+            --border-color: #e2e8f0;
+        }
+
+        * { font-family: 'Roboto Slab', serif; box-sizing: border-box; }
+        body { margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; background-color: var(--bg-gray); }
+        
+        header { 
+            background: var(--primary-blue); 
+            padding: 8px 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            color: white; 
+            width: 100%; 
+            position: relative; 
+            overflow: hidden; 
+            min-height: 75px; 
+        }
+        
+        .header-scroll-bg { position: absolute; top: 0; left: 0; width: 400%; height: 100%; background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.2) 5%, rgba(255, 255, 255, 0.6) 10%, rgba(255, 255, 255, 0.1) 15%, transparent 20%); z-index: 1; animation: scrollGlow 25s linear infinite; opacity: 0.9; }
+        @keyframes scrollGlow { 0% { transform: translateX(-100%); } 100% { transform: translateX(25%); } }
+        header .header-left, header .header-right, .header-corner, .header-corner-right { z-index: 10; }
+        header .header-left { display: flex; align-items: center; gap: 15px; }
+        
+        header .logo { height: 48px; width: 48px; border-radius: 50%; border: 2px solid #ffffff; background: white; flex-shrink: 0; }
+        header .main-title { font-size: 20px; font-weight: 900; line-height: 1.1; }
+        header .sub-title { font-size: 12px; font-weight: 600; color: var(--accent-yellow); margin-top: 1px; }
+        
+        header .header-right { display: flex; gap: 18px; align-items: center; }
+        .menu-item a { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: white; transition: transform 0.2s; }
+        .menu-item a:hover { transform: translateY(-2px); }
+        header .icon { font-size: 18px; color: var(--accent-orange); }
+        .icon-label { font-size: 8px; margin-top: 3px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .header-corner { position: absolute; top: -10px; left: -10px; height: 65px; opacity: 0.7; pointer-events: none; }
+        .header-corner-right { position: absolute; top: -10px; right: -10px; height: 65px; opacity: 0.7; transform: scaleX(-1); pointer-events: none; }
+
+        .marquee-container { background: #fff; border-bottom: 2px solid var(--border-color); overflow: hidden; white-space: nowrap; padding: 4px 0; }
+        .marquee-text { display: inline-block; padding-left: 100%; animation: marqueeScroll 45s linear infinite; font-size: 13px; font-weight: 700; color: #d32f2f; }
+        @keyframes marqueeScroll { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+
+        .info-area { padding: 15px 20px 0 20px; display: flex; flex-direction: column; gap: 15px; }
+        .info-wrapper { max-width: 1450px; margin: 0 auto; width: 100%; padding: 5px 0; }
+        .info-header { font-size: 15px; font-weight: 900; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; color: var(--primary-blue); text-transform: uppercase; }
+        .info-list { list-style: none; padding: 0; margin: 0; }
+        .info-list li { font-size: 12px; color: #475569; margin-bottom: 4px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+        .info-list li i { color: var(--accent-orange); margin-top: 3px; font-size: 10px; }
+
+        .selection-area { padding: 15px 20px; }
+        .selection-wrapper { max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+        
+        .horizontal-section { background: white; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; border: 2px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transition: all 0.3s ease; }
+        .horizontal-section.active-path { border-color: var(--primary-blue); background: #f0f7ff; }
+        .section-info h3 { margin: 0; font-size: 14px; color: var(--primary-blue); font-weight: 900; display: flex; align-items: center; gap: 10px; }
+        .step-badge { background: var(--primary-blue); color: white; font-size: 9px; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; margin-right: 5px; box-shadow: none; }
+        .section-info p { margin: 3px 0 0 0; font-size: 11px; color: #64748b; }
+        
+        .btn-register { background: var(--primary-blue); color: white; border: none; padding: 8px 22px; border-radius: 50px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; }
+        .btn-join-blink { background: #ff5722; animation: blink 1.2s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+        .registration-box { display: none; width: 100%; margin-top: -5px; padding-bottom: 15px; }
+        .registration-box.show { display: block !important; animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .verify-container { display: flex; flex-direction: column; background: #fff; padding: 12px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 2px solid var(--border-color); max-width: 500px; margin-left: auto; margin-right: auto; }
+        .verify-row { display: flex; align-items: center; gap: 12px; width: 100%; }
+        .verify-input-group { flex: 1; position: relative; display: flex; align-items: center; }
+        .verify-input-group i { position: absolute; left: 12px; color: var(--primary-blue); font-size: 16px; }
+        .verify-input-group input { width: 100%; padding: 10px 12px 10px 38px; border: 2px solid #f1f5f9; border-radius: 8px; font-size: 14px; font-weight: 700; background: #f8fafc; }
+        .verify-input-group input:focus { outline: none; border-color: var(--primary-blue); background: #fff; }
+        
+        .btn-verify { background: linear-gradient(135deg, var(--primary-blue) 0%, #0000cd 100%); color: #fff; border: none; padding: 10px 25px; border-radius: 8px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s; box-shadow: 0 3px 0px #000044; font-size: 12px; }
+        .btn-verify:hover { transform: translateY(-1px); box-shadow: 0 4px 0px #000044; }
+        .btn-verify:active { transform: translateY(2px); box-shadow: 0 1px 0px #000044; }
+        
+        .verify-error-box { display: none; margin-top: 10px; padding: 10px; background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; color: var(--error-red); font-size: 11px; line-height: 1.4; font-weight: 700; text-align: left; animation: fadeIn 0.3s ease; }
+
+        .form-header { text-align: center; margin-bottom: 20px; padding: 5px 0; }
+        .form-title { color: var(--primary-blue); font-size: 20px; font-weight: 900; border-bottom: 3px solid var(--accent-orange); display: inline-block; text-transform: uppercase; }
+        
+        .form-section { margin-bottom: 20px; padding: 25px; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        .section-name { color: var(--primary-blue); font-size: 14px; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
+        
+        .registration-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
+        .form-group input, .form-group select { padding: 10px 14px; border: 2px solid #f1f5f9; border-radius: 8px; font-size: 13px; background-color: #f8fafc; color: #1e293b; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary-blue); background-color: #fff; outline: none; }
+        .dob-container { display: grid; grid-template-columns: 1fr 2fr 1.5fr; gap: 8px; }
+
+        /* Updated Stylish Extra Small Box Selectors (Radios) */
+        .box-selector { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 2px; }
+        .box-option { position: relative; flex: 1; min-width: 45px; }
+        .box-option input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+        .box-label { display: block; padding: 4px 6px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 9px; font-weight: 800; text-align: center; cursor: pointer; transition: 0.2s; color: #475569; }
+        .box-option input:checked + .box-label { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
+
+        .review-area { background: white; border-radius: 16px; padding: 25px; border: 2px solid var(--primary-blue); margin-bottom: 25px; display: none; }
+        .review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .review-item { border-bottom: 1px solid #eee; padding: 6px 0; }
+        .review-label { font-size: 9px; color: #64748b; text-transform: uppercase; font-weight: 800; }
+        .review-value { font-size: 13px; color: var(--primary-blue); font-weight: 700; }
+
+        .inline-status-container { max-width: 1450px; margin: 0 auto; display: none; padding: 25px; text-align: center; background: white; border-radius: 12px; border: 3px dashed var(--border-color); margin-bottom: 20px; }
+        .loading-content { color: var(--primary-blue); font-weight: 800; font-size: 16px; }
+        .status-icon { font-size: 50px; margin-bottom: 15px; }
+
+        .security-wrapper { max-width: 1450px; margin: 15px auto; padding: 0 20px; }
+        .security-box { background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%); border-radius: 16px; padding: 20px; border: 1px solid #dbeafe; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+        .security-header { color: var(--primary-blue); font-size: 18px; font-weight: 900; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; border-bottom: 2px solid var(--accent-orange); padding-bottom: 8px; width: fit-content; }
+        .security-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .security-item { display: flex; align-items: flex-start; gap: 10px; background: rgba(255,255,255,0.7); padding: 12px; border-radius: 12px; border: 1px solid #edf2f7; transition: 0.3s; }
+        .security-item i { color: var(--primary-blue); font-size: 16px; margin-top: 2px; }
+        .security-item p { margin: 0; font-size: 12px; font-weight: 700; color: #334155; line-height: 1.5; }
+        .security-promise { margin-top: 15px; text-align: center; padding: 12px; background: var(--primary-blue); color: white; border-radius: 10px; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .submit-container { display: flex; justify-content: center; width: 100%; margin-top: 10px; gap: 12px; }
+        .review-btn { background: var(--primary-blue); color: white; border: none; padding: 15px 40px; font-size: 16px; font-weight: 900; border-radius: 50px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; gap: 10px; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,139,0.2); }
+        .edit-btn { background: #64748b; color: white; border: none; padding: 15px 35px; font-size: 14px; font-weight: 800; border-radius: 50px; cursor: pointer; text-transform: uppercase; }
+
+        footer { background: var(--primary-blue); color: white; padding: 25px 20px 15px 20px; border-top: 4px solid var(--accent-orange); margin-top: auto; }
+        .footer-content { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1450px; margin: 0 auto; text-align: left; }
+        .footer-column h4 { color: var(--accent-yellow); border-bottom: 1px solid var(--accent-yellow); display: inline-block; margin-bottom: 12px; font-weight: 900; font-size: 14px; text-transform: uppercase; padding-bottom: 2px; }
+        .footer-column p, .footer-column a { font-size: 11px; color: rgba(255,255,255,0.9); text-decoration: none; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; line-height: 1.4; font-weight: 600; }
+        .footer-column a:hover { color: var(--accent-yellow); text-decoration: underline; }
+        
+        .social-icons { display: flex; gap: 15px; margin: 8px 0; }
+        .social-icons a { font-size: 20px; color: white; transition: 0.2s; }
+        .social-icons a:hover { color: var(--accent-yellow); transform: scale(1.1); }
+        
+        .copyright-area { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; padding-top: 15px; text-align: center; }
+        .copyright-area p { font-size: 10px; opacity: 0.8; margin: 2px 0; }
+
+        @media (max-width: 850px) {
+            header { flex-direction: column; text-align: center; height: auto; padding: 15px 20px; gap: 15px; }
+            header .header-left { flex-direction: column; }
+            header .header-right { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; width: 100%; justify-content: center; flex-wrap: wrap; }
+            .registration-form, .review-grid, .security-grid { grid-template-columns: 1fr; }
+            .horizontal-section { flex-direction: column; gap: 10px; text-align: center; }
+            .btn-register, .btn-verify { 
+                width: auto; 
+                padding: 6px 16px; 
+                font-size: 9px; 
+                background: transparent !important; 
+                border: 1px solid currentColor !important; 
+                box-shadow: none !important; 
+                color: #ff5722 !important; 
+            }
+            .btn-verify { color: var(--primary-blue) !important; }
+            .btn-join-blink { animation: none; }
+            .footer-content { grid-template-columns: 1fr; text-align: center; }
+            .footer-column { align-items: center; }
+            .footer-column p, .footer-column a { justify-content: center; }
+            .social-icons { justify-content: center; }
+            .submit-container { flex-direction: column; }
+            .verify-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-scroll-bg"></div>
+    <img src="https://studentvisiontc.github.io/SVTC-Images/hh%20logo.png" class="header-corner" alt="">
+    <img src="https://studentvisiontc.github.io/SVTC-Images/hh%20logo.png" class="header-corner-right" alt="">
+    
+    <div class="header-left">
+        <img src="https://studentvisiontc.github.io/SVTC-Images/SV%20Circle%20logo.png" alt="SV Logo" class="logo">
+        <div>
+            <div class="main-title">Student Vision Talent Competition</div>
+            <div class="sub-title">“See Your Success”</div>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="menu-item"><a href="#"><i class="fa-solid fa-house icon"></i><span class="icon-label">Home</span></a></div>
+        <div class="menu-item"><a href="javascript:void(0)" onclick="toggleForm('paid')"><i class="fa-solid fa-user-plus icon"></i><span class="icon-label">Register</span></a></div>
+        <div class="menu-item"><a href="#"><i class="fa-solid fa-right-to-bracket icon"></i><span class="icon-label">Login</span></a></div>
+        <div class="menu-item"><a href="#"><i class="fa-solid fa-user-tie icon"></i><span class="icon-label">Admin</span></a></div>
+        <div class="menu-item"><a href="#"><i class="fa-solid fa-tags icon"></i><span class="icon-label">Pricing</span></a></div>
+    </div>
+</header>
+
+<div class="marquee-container">
+    <div class="marquee-text">Please register carefully with correct details. You will receive a WhatsApp message with all login details after registration. Review your information before final submission.</div>
+</div>
+
+<div class="info-area">
+    <div class="info-wrapper">
+        <div class="info-header"><i class="fa-solid fa-circle-exclamation"></i> Important Instructions</div>
+        <ul class="info-list">
+            <li><i class="fa-solid fa-circle-chevron-right"></i> Unpaid students should register first in Step 1. Our team will contact you.</li>
+            <li><i class="fa-solid fa-circle-chevron-right"></i> Register carefully and enter correct information.</li>
+            <li><i class="fa-solid fa-circle-chevron-right"></i> Choose the correct section and class while registering.</li>
+            <li><i class="fa-solid fa-circle-chevron-right"></i> After payment, register only under Step 2: Paid Students.</li>
+            <li><i class="fa-solid fa-circle-chevron-right"></i> Second-time joining students should submit details only after payment.</li>
+            <li><i class="fa-solid fa-circle-chevron-right"></i> Review all details before final submission to ensure data accuracy.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="selection-area">
+    <div class="selection-wrapper">
+        
+        <!-- STEP 1 -->
+        <div class="horizontal-section" id="unpaidSection">
+            <div class="section-info">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> <span class="step-badge">STEP 1</span> Unpaid Students / Enquiry</h3>
+                <p>Register here for more information or if your payment is pending.</p>
+            </div>
+            <button class="btn-register btn-join-blink" onclick="toggleForm('unpaid')">Join</button>
+        </div>
+
+        <div id="unpaidRegistration" class="registration-box">
+            <div class="form-header"><h2 class="form-title">Express Entry</h2></div>
+            <form id="unpaidForm" onsubmit="handleFormSubmit(event, 'Unpaid')">
+                <div class="form-section">
+                    <div class="section-name"><i class="fa-solid fa-bolt"></i> Quick Details</div>
+                    <div class="registration-form">
+                        <div class="form-group"><label>Full Name</label><input type="text" name="fullName" placeholder="Full Name" required></div>
+                        <div class="form-group"><label>Class</label>
+                            <select name="class" required>
+                                <option value="">Select Class</option>
+                                <option value="3rd Class">3rd Class</option>
+                                <option value="4th Class">4th Class</option>
+                                <option value="5th Class">5th Class</option>
+                                <option value="6th Class">6th Class</option>
+                                <option value="7th Class">7th Class</option>
+                                <option value="8th Class">8th Class</option>
+                                <option value="9th Class">9th Class</option>
+                                <option value="10th Class">10th Class</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Father Name</label><input type="text" name="parentName" placeholder="Father Name" required></div>
+                        <div class="form-group"><label>Mobile Number</label><input type="tel" name="mobile" placeholder="Mobile Number" required></div>
+                        <div class="form-group"><label>School Name</label><input type="text" name="schoolName" placeholder="School Name" required></div>
+                        <div class="form-group"><label>Village</label><input type="text" name="village" placeholder="Village" required></div>
+                    </div>
+                </div>
+                <div class="submit-container"><button type="submit" class="review-btn submitBtn">Submit Entry</button></div>
+            </form>
+        </div>
+        <div id="step1InlineStatus" class="inline-status-container"></div>
+
+        <!-- STEP 2 -->
+        <div class="horizontal-section" id="paidSection">
+            <div class="section-info">
+                <h3><i class="fa-solid fa-circle-check"></i> <span class="step-badge">STEP 2</span> After Payment / Paid Students Registration</h3>
+                <p>Register here if you have completed the payment for full access and tests.</p>
+            </div>
+            <button class="btn-register btn-join-blink" onclick="toggleForm('paid')">Join</button>
+        </div>
+
+        <div id="paidRegistration" class="registration-box">
+            <div id="paidVerifyContainer" class="verify-container" style="display: flex;">
+                <div class="verify-row">
+                    <div class="verify-input-group">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        <input type="tel" id="paidVerifyMobile" placeholder="Enter Mobile Number">
+                    </div>
+                    <button type="button" class="btn-verify" id="btnVerifyPaid" onclick="verifyNumber('paid')">Verify</button>
+                </div>
+                <div id="paidVerifyError" class="verify-error-box"></div>
+            </div>
+
+            <div id="paidFullForm" style="display: none;">
+                <div class="form-header"><h2 class="form-title">Paid Full Profile Registration</h2></div>
+                <form id="paidForm" onsubmit="prepareReview(event, 'paid')">
+                    <div class="form-section">
+                        <div class="section-name"><i class="fa-solid fa-address-card"></i> SECTION 1</div>
+                        <div class="registration-form">
+                            <div class="form-group"><label>Full Name</label><input type="text" name="fullName" placeholder="Full Name" required></div>
+                            <div class="form-group"><label>Class</label>
+                                <select name="class" required>
+                                    <option value="">Select Class</option>
+                                    <option value="3rd Class">3rd Class</option>
+                                    <option value="4th Class">4th Class</option>
+                                    <option value="5th Class">5th Class</option>
+                                    <option value="6th Class">6th Class</option>
+                                    <option value="7th Class">7th Class</option>
+                                    <option value="8th Class">8th Class</option>
+                                    <option value="9th Class">9th Class</option>
+                                    <option value="10th Class">10th Class</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Mobile Number</label><input type="tel" name="mobile" id="paidActualMobile" readonly required></div>
+                            <div class="form-group"><label>Number used by</label>
+                                <select name="numberUsedBy">
+                                    <option value="">Select...</option>
+                                    <option value="Self">Self</option>
+                                    <option value="Father">Father</option>
+                                    <option value="Mother">Mother</option>
+                                    <option value="Brother">Brother</option>
+                                    <option value="Sister">Sister</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Whatsapp Number</label>
+                                <div class="box-selector">
+                                    <div class="box-option"><input type="radio" name="isWa" value="Yes" id="waYes"><label class="box-label" for="waYes">Yes</label></div>
+                                    <div class="box-option"><input type="radio" name="isWa" value="No" id="waNo"><label class="box-label" for="waNo">No</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>Parent Name</label><input type="text" name="parentName" placeholder="Father/Mother Name"></div>
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <div class="box-selector">
+                                    <div class="box-option"><input type="radio" name="gender" value="Male" id="gMale"><label class="box-label" for="gMale">Male</label></div>
+                                    <div class="box-option"><input type="radio" name="gender" value="Female" id="gFemale"><label class="box-label" for="gFemale">Female</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-name"><i class="fa-solid fa-school"></i> SECTION 2</div>
+                        <div class="registration-form">
+                            <div class="form-group"><label>Date of Birth</label>
+                                <div class="dob-container">
+                                    <select name="dob_day" required><option value="">Day</option><script>for(let i=1;i<=31;i++)document.write(`<option value="${i}">${i}</option>`)</script></select>
+                                    <select name="dob_month" required><option value="">Month</option><option value="Jan">Jan</option><option value="Feb">Feb</option><option value="Mar">Mar</option><option value="Apr">Apr</option><option value="May">May</option><option value="Jun">Jun</option><option value="Jul">Jul</option><option value="Aug">Aug</option><option value="Sep">Sep</option><option value="Oct">Oct</option><option value="Nov">Nov</option><option value="Dec">Dec</option></select>
+                                    <select name="dob_year" required><option value="">Year</option><script>for(let i=new Date().getFullYear();i>=2000;i--)document.write(`<option value="${i}">${i}</option>`)</script></select>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>School Name</label><input type="text" name="schoolName" placeholder="School Name"></div>
+                            <div class="form-group"><label>School City</label><input type="text" name="schoolCity" placeholder="City"></div>
+                            <div class="form-group"><label>Medium</label>
+                                <select name="medium">
+                                    <option value="">Select...</option>
+                                    <option value="English">English</option><option value="Telugu">Telugu</option><option value="Hindi">Hindi</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>School Type</label>
+                                <select name="schoolType">
+                                    <option value="">Select...</option>
+                                    <option value="Private">Private</option><option value="Government">Government</option><option value="Residential">Residential</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Interesting Subject</label>
+                                <select name="interestingSubject">
+                                    <option value="">Select...</option>
+                                    <option value="Maths">Maths</option>
+                                    <option value="English">English</option>
+                                    <option value="Telugu">Telugu</option>
+                                    <option value="Scince">Science</option>
+                                    <option value="Social">Social</option>
+                                    <option value="EVS">EVS</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Dream / Ambition</label><input type="text" name="ambition" placeholder="Goal"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-name"><i class="fa-solid fa-language"></i> SECTION 3</div>
+                        <div class="registration-form">
+                            <div class="form-group"><label>Do you know English</label>
+                                <div class="box-selector">
+                                    <div class="box-option"><input type="radio" name="knowEnglish" value="Yes" id="engYes"><label class="box-label" for="engYes">Yes</label></div>
+                                    <div class="box-option"><input type="radio" name="knowEnglish" value="No" id="engNo"><label class="box-label" for="engNo">No</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>Do you know Telugu</label>
+                                <div class="box-selector">
+                                    <div class="box-option"><input type="radio" name="knowTelugu" value="Yes" id="telYes"><label class="box-label" for="telYes">Yes</label></div>
+                                    <div class="box-option"><input type="radio" name="knowTelugu" value="No" id="telNo"><label class="box-label" for="telNo">No</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>Do you know Hindi</label>
+                                <div class="box-selector">
+                                    <div class="box-option"><input type="radio" name="knowHindi" value="Yes" id="hinYes"><label class="box-label" for="hinYes">Yes</label></div>
+                                    <div class="box-option"><input type="radio" name="knowHindi" value="No" id="hinNo"><label class="box-label" for="hinNo">No</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>Taken Payment Plan</label>
+                                <select name="paymentPlan" required>
+                                    <option value="Gold 499 Plan">Gold 499 Plan</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Paid Amount</label><input type="number" name="paidAmount" value="499" readonly></div>
+                            <div class="form-group"><label>Paid From</label>
+                                <select name="paidFrom">
+                                    <option value="">Select...</option>
+                                    <option value="PhonePe">PhonePe</option>
+                                    <option value="Google Pay">Google Pay</option>
+                                    <option value="Paytm">Paytm</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-name"><i class="fa-solid fa-map-location-dot"></i> SECTION 4</div>
+                        <div class="registration-form">
+                            <div class="form-group"><label>Village Name</label><input type="text" name="village" placeholder="Village"></div>
+                            <div class="form-group"><label>Mandal</label><input type="text" name="mandal" placeholder="Mandal"></div>
+                            <div class="form-group"><label>District</label><input type="text" name="district" placeholder="District"></div>
+                            <div class="form-group"><label>State</label><input type="text" name="state" value="Andhra Pradesh"></div>
+                            <div class="form-group"><label>Joined From</label>
+                                <select name="joinedFrom">
+                                    <option value="">Select...</option>
+                                    <option value="Class DEMO">Class DEMO</option>
+                                    <option value="Teacher">Teacher</option>
+                                    <option value="Friends">Friends</option>
+                                    <option value="Family">Family</option>
+                                    <option value="Youtube">Youtube</option>
+                                    <option value="Instagram">Instagram</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Reference Name</label>
+                                <select name="refName">
+                                    <option value="">Select...</option>
+                                    <option value="K Narasimha Reddy">K Narasimha Reddy</option>
+                                    <option value="B Satya Narayana">B Satya Narayana</option>
+                                    <option value="K Jaya Lakshmi">K Jaya Lakshmi</option>
+                                    <option value="E Siva Krishna">E Siva Krishna</option>
+                                    <option value="B Pavan murthi">B Pavan murthi</option>
+                                    <option value="G Muni Sekhar">G Muni Sekhar</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Reference Number</label><input type="tel" name="refNumber" placeholder="Number"></div>
+                            
+                            <div class="form-group" style="grid-column: span 2; flex-direction: row; align-items: center; gap: 10px; margin-top: 10px;">
+                                <input type="checkbox" name="agreement" value="Agreed" id="agree_2" required style="width:18px; height:18px; cursor:pointer;">
+                                <span style="font-size: 11px; font-weight: 800; color: #64748b;">I AGREE TO <a href="#" style="color: var(--primary-blue); text-decoration: underline;">TERMS & CONDITIONS</a></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="submit-container"><button type="submit" class="review-btn"><i class="fa-solid fa-magnifying-glass"></i> Review Details</button></div>
+                </form>
+            </div>
+        </div>
+
+        <div id="reviewBox" class="review-area">
+            <div class="form-header"><h2 class="form-title">Review Information</h2></div>
+            <div id="reviewContent" class="review-grid"></div>
+            <div class="submit-container">
+                <button type="button" class="edit-btn" onclick="editForm()"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                <button type="button" class="review-btn" onclick="finalSubmitProcess()"><i class="fa-solid fa-check-double"></i> Confirm & Submit</button>
+            </div>
+        </div>
+
+        <div id="step2InlineStatus" class="inline-status-container"></div>
+
+        <!-- STEP 3 -->
+        <div class="horizontal-section" id="anotherSection">
+            <div class="section-info">
+                <h3><i class="fa-solid fa-user-plus"></i> <span class="step-badge">STEP 3</span> Register Another Student With Same Number</h3>
+                <p>Register siblings or friends using the same family mobile number.</p>
+            </div>
+            <button class="btn-register btn-join-blink" onclick="toggleForm('another')">Join</button>
+        </div>
+
+        <div id="anotherRegistration" class="registration-box">
+            <div id="anotherVerifyContainer" class="verify-container" style="display: flex;">
+                <div class="verify-row">
+                    <div class="verify-input-group">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        <input type="tel" id="anotherVerifyMobile" placeholder="Enter Registered Family Number">
+                    </div>
+                    <button type="button" class="btn-verify" id="btnVerifyAnother" onclick="verifyNumber('another')">Verify</button>
+                </div>
+                <div id="anotherVerifyError" class="verify-error-box"></div>
+            </div>
+
+            <div id="anotherFullForm" style="display: none;">
+                <div class="form-header"><h2 class="form-title">Additional Student Registration</h2></div>
+                <form id="anotherForm" onsubmit="prepareReview(event, 'another')">
+                    <div class="form-section">
+                        <div class="section-name"><i class="fa-solid fa-address-card"></i> SECTION 1</div>
+                        <div class="registration-form">
+                            <div class="form-group"><label>Full Name</label><input type="text" name="fullName" placeholder="Full Name" required></div>
+                            <div class="form-group"><label>Class</label>
+                                <select name="class" required>
+                                    <option value="">Select Class</option>
+                                    <option value="3rd Class">3rd Class</option>
+                                    <option value="4th Class">4th Class</option>
+                                    <option value="5th Class">5th Class</option>
+                                    <option value="6th Class">6th Class</option>
+                                    <option value="7th Class">7th Class</option>
+                                    <option value="8th Class">8th Class</option>
+                                    <option value="9th Class">9th Class</option>
+                                    <option value="10th Class">10th Class</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Mobile Number</label><input type="tel" name="mobile" id="anotherActualMobile" readonly required></div>
+                            <div class="form-group"><label>Number used by</label>
+                                <select name="numberUsedBy">
+                                    <option value="">Select...</option>
+                                    <option value="Self">Self</option>
+                                    <option value="Father">Father</option>
+                                    <option value="Mother">Mother</option>
+                                    <option value="Brother">Brother</option>
+                                    <option value="Sister">Sister</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Whatsapp Number</label>
+                                <div class="box-selector">
+                                    <div class="box-option"><input type="radio" name="isWa_3" value="Yes" id="waYes_3"><label class="box-label" for="waYes_3">Yes</label></div>
+                                    <div class="box-option"><input type="radio" name="isWa_3" value="No" id="waNo_3"><label class="box-label" for="waNo_3">No</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>Parent Name</label><input type="text" name="parentName" placeholder="Father/Mother Name"></div>
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <div class="box-selector">
+                                    <div class="box-option"><input type="radio" name="gender_3" value="Male" id="gMale_3"><label class="box-label" for="gMale_3">Male</label></div>
+                                    <div class="box-option"><input type="radio" name="gender_3" value="Female" id="gFemale_3"><label class="box-label" for="gFemale_3">Female</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="section-name"><i class="fa-solid fa-school"></i> SECTION 2</div>
+                        <div class="registration-form">
+                            <div class="form-group"><label>Date of Birth</label>
+                                <div class="dob-container">
+                                    <select name="dob_day" required><option value="">Day</option><script>for(let i=1;i<=31;i++)document.write(`<option value="${i}">${i}</option>`)</script></select>
+                                    <select name="dob_month" required><option value="">Month</option><option value="Jan">Jan</option><option value="Feb">Feb</option><option value="Mar">Mar</option><option value="Apr">Apr</option><option value="May">May</option><option value="Jun">Jun</option><option value="Jul">Jul</option><option value="Aug">Aug</option><option value="Sep">Sep</option><option value="Oct">Oct</option><option value="Nov">Nov</option><option value="Dec">Dec</option></select>
+                                    <select name="dob_year" required><option value="">Year</option><script>for(let i=new Date().getFullYear();i>=2000;i--)document.write(`<option value="${i}">${i}</option>`)</script></select>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>School Name</label><input type="text" name="schoolName" placeholder="School Name"></div>
+                            <div class="form-group"><label>School City</label><input type="text" name="schoolCity" placeholder="City"></div>
+                            <div class="form-group"><label>Medium</label>
+                                <select name="medium">
+                                    <option value="">Select...</option>
+                                    <option value="English">English</option><option value="Telugu">Telugu</option><option value="Hindi">Hindi</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Interesting Subject</label>
+                                <select name="interestingSubject">
+                                    <option value="">Select...</option>
+                                    <option value="Maths">Maths</option>
+                                    <option value="English">English</option>
+                                    <option value="Telugu">Telugu</option>
+                                    <option value="Scince">Science</option>
+                                    <option value="Social">Social</option>
+                                    <option value="EVS">EVS</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Dream / Ambition</label><input type="text" name="ambition" placeholder="Goal"></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="section-name"><i class="fa-solid fa-language"></i> SECTION 3</div>
+                        <div class="registration-form">
+                            <div class="form-group"><label>Do you know English</label>
+                                <div class="box-selector">
+                                    <div class="box-option"><input type="radio" name="knowEnglish_3" value="Yes" id="engYes_3"><label class="box-label" for="engYes_3">Yes</label></div>
+                                    <div class="box-option"><input type="radio" name="knowEnglish_3" value="No" id="engNo_3"><label class="box-label" for="engNo_3">No</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>Do you know Telugu</label>
+                                <div class="box-selector">
+                                    <div class="box-option"><input type="radio" name="knowTelugu_3" value="Yes" id="telYes_3"><label class="box-label" for="telYes_3">Yes</label></div>
+                                    <div class="box-option"><input type="radio" name="knowTelugu_3" value="No" id="telNo_3"><label class="box-label" for="telNo_3">No</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>Do you know Hindi</label>
+                                <div class="box-selector">
+                                    <div class="box-option"><input type="radio" name="knowHindi_3" value="Yes" id="hinYes_3"><label class="box-label" for="hinYes_3">Yes</label></div>
+                                    <div class="box-option"><input type="radio" name="knowHindi_3" value="No" id="hinNo_3"><label class="box-label" for="hinNo_3">No</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group"><label>Taken Payment Plan</label>
+                                <select name="paymentPlan" required>
+                                    <option value="Gold 499 Plan">Gold 499 Plan</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Paid Amount</label><input type="number" name="paidAmount" value="499" readonly></div>
+                            <div class="form-group"><label>Paid From</label>
+                                <select name="paidFrom">
+                                    <option value="">Select...</option>
+                                    <option value="PhonePe">PhonePe</option>
+                                    <option value="Google Pay">Google Pay</option>
+                                    <option value="Paytm">Paytm</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="section-name"><i class="fa-solid fa-map-location-dot"></i> SECTION 4</div>
+                        <div class="registration-form">
+                            <div class="form-group"><label>Village Name</label><input type="text" name="village" placeholder="Village"></div>
+                            <div class="form-group"><label>Mandal</label><input type="text" name="mandal" placeholder="Mandal"></div>
+                            <div class="form-group"><label>District</label><input type="text" name="district" placeholder="District"></div>
+                            <div class="form-group"><label>State</label><input type="text" name="state" value="Andhra Pradesh"></div>
+                            <div class="form-group"><label>Joined From</label>
+                                <select name="joinedFrom">
+                                    <option value="">Select...</option>
+                                    <option value="Class DEMO">Class DEMO</option>
+                                    <option value="Teacher">Teacher</option>
+                                    <option value="Friends">Friends</option>
+                                    <option value="Family">Family</option>
+                                    <option value="Youtube">Youtube</option>
+                                    <option value="Instagram">Instagram</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Reference Name</label>
+                                <select name="refName">
+                                    <option value="">Select...</option>
+                                    <option value="K Narasimha Reddy">K Narasimha Reddy</option>
+                                    <option value="B Satya Narayana">B Satya Narayana</option>
+                                    <option value="K Jaya Lakshmi">K Jaya Lakshmi</option>
+                                    <option value="E Siva Krishna">E Siva Krishna</option>
+                                    <option value="B Pavan murthi">B Pavan murthi</option>
+                                    <option value="G Muni Sekhar">G Muni Sekhar</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Reference Number</label><input type="tel" name="refNumber" placeholder="Number"></div>
+                            
+                            <div class="form-group" style="grid-column: span 2; flex-direction: row; align-items: center; gap: 10px; margin-top: 10px;">
+                                <input type="checkbox" name="agreement" value="Agreed" id="agree_3" required style="width:18px; height:18px; cursor:pointer;">
+                                <span style="font-size: 11px; font-weight: 800; color: #64748b;">I AGREE TO <a href="#" style="color: var(--primary-blue); text-decoration: underline;">TERMS & CONDITIONS</a></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-container"><button type="submit" class="review-btn"><i class="fa-solid fa-magnifying-glass"></i> Review Details</button></div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="security-wrapper">
+    <div class="security-box">
+        <div class="security-header"><i class="fa-solid fa-user-shield"></i> Security & Data Protection</div>
+        <div class="security-grid">
+            <div class="security-item"><i class="fa-solid fa-check-circle"></i><p>We collect only basic personal details required for registration.</p></div>
+            <div class="security-item"><i class="fa-solid fa-check-circle"></i><p>We do not share, sell, or misuse your data in any way.</p></div>
+            <div class="security-item"><i class="fa-solid fa-check-circle"></i><p>We never ask for OTPs. Please stay alert and cautious.</p></div>
+            <div class="security-item"><i class="fa-solid fa-check-circle"></i><p>We do not collect Aadhaar, PAN, or any sensitive documents.</p></div>
+            <div class="security-item"><i class="fa-solid fa-check-circle"></i><p>Your complete data is kept secure and safe with us.</p></div>
+            <div class="security-item"><i class="fa-solid fa-check-circle"></i><p>Please be careful and ensure security while entering your details.</p></div>
+        </div>
+        <div class="security-promise">We promise that all registration details remain protected and secure at all times, even after login.</div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-column">
+            <h4><i class="fa-solid fa-headset"></i> Contact Support</h4>
+            <p><i class="fas fa-phone"></i> +91 8985170500</p>
+            <p><i class="fas fa-envelope"></i> contact.studentvision@gmail.com</p>
+            <a href="#"><i class="fa-solid fa-circle-info"></i> About Us</a>
+        </div>
+        <div class="footer-column">
+            <h4><i class="fa-solid fa-share-nodes"></i> Follow Us</h4>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+            </div>
+            <a href="#"><i class="fa-solid fa-shield-halved"></i> Privacy Policy</a>
+            <p style="opacity: 0.7; font-size: 10px; margin-top: 5px;">&copy; 2025 Student Vision TC. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyNShRJlq_tVbQMBE_Drrisyxdw6QiSitdcTZXJcrI6XHy2TvdUbXlzomaq5LLt2tU7/exec';
+    const unpaidScriptURL = 'https://script.google.com/macros/s/AKfycbxFkcz0aOakTKWNsZY9c8GzGboruOHCSFBSIiWUUUvSWkTMdUZ0-CiPxkhPEBAR5bU/exec';
+    const verifyScriptURL = 'https://script.google.com/macros/s/AKfycbzf0fWuvVCyCV2TbGyG1BSXEab12mRiHGd77rcCxcfADb7JNe4HWFnsdknOxlBZgaob/exec';
+    const verifyScriptURLStep3 = 'https://script.google.com/macros/s/AKfycbyX30gb-02dVBWnahf4gTQfipXOVu9Qoj-Eti3tW0NZ_iMG2HrkIdcY1zW9WO-HdSGn/exec';
+    const step3SubmitURL = 'https://script.google.com/macros/s/AKfycbyw1Qj72a3V3560bZ9QGuXEYC03hYo-Pq9THpC6KvZziHNY4As6a_biUCwQ3dEY8Vus/exec';
+
+    let globalFormData = {};
+    let activeStepType = '';
+
+    function toggleForm(type) {
+        const targetBoxId = type === 'paid' ? 'paidRegistration' : (type === 'unpaid' ? 'unpaidRegistration' : 'anotherRegistration');
+        const targetBox = document.getElementById(targetBoxId);
+        if (activeStepType === type) { hideAll(); activeStepType = ''; return; }
+        hideAll();
+        activeStepType = type;
+        const sectionId = type === 'another' ? 'anotherSection' : type + 'Section';
+        document.getElementById(sectionId).classList.add('active-path');
+        targetBox.style.display = 'block';
+        targetBox.classList.add('show');
+        if (type === 'paid') {
+            document.getElementById('paidVerifyContainer').style.display = 'flex';
+            document.getElementById('paidFullForm').style.display = 'none';
+        } else if (type === 'another') {
+            document.getElementById('anotherVerifyContainer').style.display = 'flex';
+            document.getElementById('anotherFullForm').style.display = 'none';
+        }
+        setTimeout(() => { window.scrollTo({ top: document.getElementById(sectionId).offsetTop - 20, behavior: 'smooth' }); }, 150);
+    }
+
+    function hideAll() {
+        const sections = ['paidSection', 'unpaidSection', 'anotherSection'];
+        const boxes = ['paidRegistration', 'unpaidRegistration', 'anotherRegistration'];
+        sections.forEach(s => document.getElementById(s).classList.remove('active-path'));
+        boxes.forEach(b => {
+            const box = document.getElementById(b);
+            box.classList.remove('show');
+            box.style.display = 'none';
+        });
+        document.getElementById('step1InlineStatus').style.display = 'none';
+        document.getElementById('step2InlineStatus').style.display = 'none';
+        document.getElementById('reviewBox').style.display = 'none';
+    }
+
+    function verifyNumber(step) {
+        const mobileInput = document.getElementById(step + 'VerifyMobile');
+        const mobile = mobileInput.value.trim();
+        const btn = document.getElementById('btnVerify' + step.charAt(0).toUpperCase() + step.slice(1));
+        const errorBox = document.getElementById(step + 'VerifyError');
+        errorBox.style.display = 'none';
+        if (mobile.length < 10) {
+            errorBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Please enter valid 10-digit mobile number.';
+            errorBox.style.display = 'block';
+            return;
+        }
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+        const targetUrl = (step === 'paid') ? verifyScriptURL : verifyScriptURLStep3;
+        fetch(`${targetUrl}?mobile=${mobile}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById(step + 'ActualMobile').value = mobile;
+                    document.getElementById(step + 'VerifyContainer').style.display = 'none';
+                    document.getElementById(step + 'FullForm').style.display = 'block';
+                } else {
+                    errorBox.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> ${data.message}`;
+                    errorBox.style.display = 'block';
+                }
+            })
+            .catch(() => {
+                errorBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Connection failed.';
+                errorBox.style.display = 'block';
+            })
+            .finally(() => { btn.disabled = false; btn.innerHTML = 'Verify'; });
+    }
+
+    function prepareReview(e, type) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        
+        if(type === 'paid') {
+            data.isWhatsapp = data.isWa;
+            data.gender = data.gender;
+            data.knowEnglish = data.knowEnglish;
+            data.knowTelugu = data.knowTelugu;
+            data.knowHindi = data.knowHindi;
+        } else {
+            data.isWhatsapp = data.isWa_3;
+            data.gender = data.gender_3;
+            data.knowEnglish = data.knowEnglish_3;
+            data.knowTelugu = data.knowTelugu_3;
+            data.knowHindi = data.knowHindi_3;
+        }
+
+        data.dob = `${data.dob_day}-${data.dob_month}-${data.dob_year}`;
+        delete data.dob_day; delete data.dob_month; delete data.dob_year;
+        
+        globalFormData = data;
+        activeStepType = type;
+
+        const reviewContent = document.getElementById('reviewContent');
+        reviewContent.innerHTML = '';
+        const labels = {
+            fullName: "Full Name", class: "Class", mobile: "Mobile", numberUsedBy: "Number Used By",
+            isWhatsapp: "Is Whatsapp?", parentName: "Parent Name", gender: "Gender", dob: "Date of Birth",
+            schoolName: "School Name", schoolCity: "School City", medium: "Medium", 
+            interestingSubject: "Subject", ambition: "Ambition", knowEnglish: "Know English", knowTelugu: "Know Telugu",
+            knowHindi: "Know Hindi", paymentPlan: "Payment Plan", paidAmount: "Paid Amount", paidFrom: "Paid From",
+            village: "Village", mandal: "Mandal", district: "District", state: "State", joinedFrom: "Joined Via",
+            refName: "Reference Name", refNumber: "Reference Number", agreement: "Agreement"
+        };
+        for (const [key, value] of Object.entries(data)) {
+            if(labels[key]) {
+                reviewContent.innerHTML += `<div class="review-item"><div class="review-label">${labels[key]}</div><div class="review-value">${value || 'N/A'}</div></div>`;
+            }
+        }
+        document.getElementById(type === 'paid' ? 'paidRegistration' : 'anotherRegistration').style.display = 'none';
+        document.getElementById('reviewBox').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('reviewBox').offsetTop - 50, behavior: 'smooth' });
+    }
+
+    function editForm() {
+        document.getElementById('reviewBox').style.display = 'none';
+        const boxId = activeStepType === 'paid' ? 'paidRegistration' : 'anotherRegistration';
+        const box = document.getElementById(boxId);
+        box.style.display = 'block';
+        box.classList.add('show');
+    }
+
+    function finalSubmitProcess() {
+        const statusArea = document.getElementById('step2InlineStatus');
+        document.getElementById('reviewBox').style.display = 'none';
+        statusArea.style.display = 'block';
+        statusArea.innerHTML = `<div class="loading-content"><i class="fas fa-circle-notch fa-spin status-icon"></i><p>SYNCING DATA...</p></div>`;
+        const targetURL = (activeStepType === 'paid') ? scriptURL : step3SubmitURL;
+        fetch(targetURL, { method: 'POST', body: JSON.stringify(globalFormData) })
+        .then(res => res.json())
+        .then(data => {
+            if (data.result === 'error') {
+                statusArea.innerHTML = `<div class="error-content"><i class="fa-solid fa-circle-xmark status-icon"></i><h2>ERROR!</h2><p>${data.message}</p><div class="submit-container"><button onclick="editForm()" class="edit-btn">Edit</button></div></div>`;
+            } else {
+                let credentialsHtml = '';
+                if (data.username && data.password) {
+                    credentialsHtml = `<div style="background: #f0f7ff; border: 2px dashed var(--primary-blue); padding: 15px; border-radius: 10px; margin: 15px 0; max-width: 400px; margin-left: auto; margin-right: auto;"><p style="margin: 5px 0; font-weight: 800; color: var(--primary-blue); font-size: 16px;">USERNAME: <span style="color: var(--accent-orange);">${data.username}</span></p><p style="margin: 5px 0; font-weight: 800; color: var(--primary-blue); font-size: 16px;">PASSWORD: <span style="color: var(--accent-orange);">${data.password}</span></p></div>`;
+                }
+                statusArea.innerHTML = `<div class="success-content"><i class="fa-solid fa-circle-check status-icon"></i><h2 style="font-weight: 900;">SUCCESSFUL!</h2><p style="margin-bottom: 15px;">Your registration has been completed.</p>${credentialsHtml}<div class="submit-container"><button onclick="location.reload()" class="review-btn" style="padding: 12px 30px; font-size: 14px;">Home</button></div></div>`;
+            }
+        })
+        .catch(() => { statusArea.innerHTML = `<div class="error-content"><i class="fa-solid fa-triangle-exclamation status-icon"></i><h2>FAILED!</h2><p>Connection issue.</p></div>`; });
+    }
+
+    function handleFormSubmit(e, type) {
+        e.preventDefault();
+        const form = e.target;
+        const targetURL = (type === 'Unpaid') ? unpaidScriptURL : scriptURL;
+        const statusArea = (type === 'Unpaid') ? document.getElementById('step1InlineStatus') : document.getElementById('step2InlineStatus');
+        form.parentElement.style.display = 'none';
+        statusArea.style.display = 'block';
+        statusArea.innerHTML = `<div class="loading-content"><i class="fas fa-circle-notch fa-spin status-icon"></i><p>SUBMITTING...</p></div>`;
+        const formData = new FormData(form);
+        const dataObject = Object.fromEntries(formData);
+        fetch(targetURL, { method: 'POST', body: JSON.stringify(dataObject) })
+        .then(res => res.json())
+        .then(data => {
+            if (data.result === 'error') {
+                statusArea.innerHTML = `<div class="error-content"><i class="fa-solid fa-circle-xmark status-icon"></i><h2>FAILED!</h2><p>${data.message}</p></div>`;
+            } else {
+                statusArea.innerHTML = `<div class="success-content"><i class="fa-solid fa-circle-check status-icon"></i><h2>SUCCESSFUL!</h2><p>Details Submitted Successfully.</p><div class="submit-container"><button onclick="location.reload()" class="review-btn">Home</button></div></div>`;
+            }
+        })
+        .catch(() => { statusArea.innerHTML = `<div class="error-content"><i class="fa-solid fa-triangle-exclamation status-icon"></i><h2>ERROR!</h2><p>Please try again later.</p></div>`; });
+    }
+</script>
+
+</body>
+</html>
